@@ -35,6 +35,7 @@ export default defineConfig({
                   label: 'Guides',
                   items: [
                       // Each item here is one entry in the navigation menu.
+                      { label: 'Building with Vite', slug: 'guides/building-with-vite' },
                       { label: 'R2WC in React', slug: 'guides/r2wc-in-react' },
                       { label: 'Typescript', slug: 'guides/typescript' },
                   ],
