@@ -23,6 +23,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 <CardGrid stagger>
 	<Card title="Simple API" icon="pencil">
 		React component + prop definition = Web component!
+    [See full api](/api/api/)
 	</Card>
 	<Card title="Live updates" icon="add-document">
 		Changing the element's attributes or properties triggers React updates.
@@ -34,3 +35,34 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 		R2WC is a product of [Bitovi](https://bitovi.com).
 	</Card>
 </CardGrid>
+
+React to Web Component is a Typescript library that packages any React component into a Web compnonent, usable by any framework or even none at all!
+
+The props passed to the React component can be updated by directly updating the props on the component object
+```tsx
+import r2wc from "@r2wc/react-to-web-component"
+customElements.define(
+  "my-component",
+  r2wc(
+    ({ name }) => <span> Hello {name}!</span>,
+    { props: { name: "string" }}
+  )
+);
+
+const MyComponent = document.createElement("my-component");
+MyComponent.name = "Justin";
+document.body.append(MyComponent); // will show "Hello Justin!"
+```
+
+or by updating the attributes of the component tag
+```tsx
+// will show "Hello Brian!"
+document.body.innerHTML += '<my-component name="Brian" ></my-component>';
+
+// then "Hello Kyle!"
+document.querySelector('my-component').setAttribute("name", "Kyle");
+```
+
+React to Web Component has attribute value conversions for string, number, object (JSON), and function prop types!
+
+Get started today with the [complete example guide](/api/complete-example/).
