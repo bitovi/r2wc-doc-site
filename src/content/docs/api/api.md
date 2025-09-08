@@ -7,8 +7,9 @@ title: API
   convert to a Web Component.
 - `options` - An set of parameters.
 
-  - `options.shadow` - Use shadow DOM rather than light DOM.
-  - `options.dispatchEvents` - Will cause dispatchEvent to be called for functions when attribute is not passed (this object should be same type as passed to [Event constructor options](https://developer.mozilla.org/en-US/docs/Web/API/Event/Event#options))
+  - `options.shadow` - ("open", "closed", or undefined) Use the specified shadow DOM mode rather than light DOM.
+  - `options.events` - Array of camelCasedProps to dispatch as custom events or a Record of event names to their associated [Event constructor options](https://developer.mozilla.org/en-US/docs/Web/API/Event/Event#options).
+    - When dispatching events from named properties, "on" is stripped from the beginning of the property name if present, and the result is lowercased: the property `onMyCustomEvent` dispatches as "mycustomevent".
   - `options.props` - Array of camelCasedProps to watch as String values or { [camelCasedProps]: "string" | "number" | "boolean" | "function" | "json" }
 
     - When specifying Array or Object as the type, the string passed into the attribute must pass `JSON.parse()` requirements.
@@ -65,7 +66,7 @@ var shadowContent = myGreeting.shadowRoot.children[0]
 
 If propTypes are defined on the underlying React component, dashed-attributes on the webcomponent are converted into the corresponding camelCase React props and the string attribute value is passed in.
 
-```js
+```jsx
 function Greeting({ camelCaseName }) {
   return <h1>Hello, {camelCaseName}</h1>
 }
@@ -86,7 +87,7 @@ console.log(document.body.firstElementChild.innerHTML) // "<h1>Hello, Christophe
 
 If `options.props` is specified, R2WC will use those props instead of the keys from propTypes. If it's an array, all corresponding kebob-cased attr values will be passed as strings to the underlying React component.
 
-```js
+```jsx
 function Greeting({ camelCaseName }) {
   return <h1>Hello, {camelCaseName}</h1>
 }
@@ -115,7 +116,7 @@ This is the recommended way of passing props to r2wc.
 
 ### "string" | "number" | "boolean" | "function" | "json" props
 
-```js
+```jsx
 function AttrPropTypeCasting(props) {
   console.log(props) // Note
   return <h1>Hello, {props.stringProp}</h1>
@@ -166,9 +167,9 @@ document.body.innerHTML = `
 
 When `Function` is specified as the type, attribute values on the web component will be converted into function references when passed into the underlying React component. The string value of the attribute must be a valid reference to a function on `window` (or on `global`).
 
-Note: If you want to avoid global functions, instead of passing attribute you can pass `dispatchEvents` object in options and simply listen on events using `addEventListener` on the custom element. See below.
+Note: If you want to avoid global functions, instead of passing an attribute you can pass an `events` object in options, and listen on events using `addEventListener` on the custom element. See below.
 
-```js
+```jsx
 function ThemeSelect({ handleClick }) {
   return (
     <div>
@@ -205,9 +206,9 @@ setTimeout(
 
 ### Event dispatching
 
-When `Function` is specified as the type, instead of passing attribute values referencing global methods, you can simply listen on the DOM event.
+As an alternative to using function props, the `events` object insructs r2wc to dispatch a corresponding DOM event that can be listened to on the custom element itself, on ancestor elements using `bubbles`, and outside of any containing shadow DOM using `composed`.
 
-```js
+```jsx
 function ThemeSelect({ onSelect }) {
   return (
     <div>
@@ -219,8 +220,7 @@ function ThemeSelect({ onSelect }) {
 }
 
 const WebThemeSelect = reactToWebComponent(ThemeSelect, {
-  props: { onSelect: "function" },
-  dispatchEvents: { bubbles: true }
+  events: { onSelect: { bubbles: true } } // dispatches as "select", will bubble to ancestor elements but not escape a shadow DOM
 })
 
 customElements.define("theme-select", WebThemeSelect)
@@ -238,3 +238,5 @@ setTimeout(() => {
 }, 0)
 // ^ calls event listener, logs: true, "Jane"
 ```
+
+> Note: `events` and `props` entries should not be used for the same named property.  During initial setup, the event handler will overwrite the function property handler, and if the attribute changes after construction, the new function property handler will overwrite the event handler.
