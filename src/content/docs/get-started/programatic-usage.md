@@ -1,7 +1,7 @@
 ---
 title: Programmatic and Delcarative Usage
 ---
-You can use `<web-greeting>` programatically:
+You can use `<web-greeting>` from [the complete example](/get-started/complete-example) programatically, instead of having to define in in static HTML.  This can be useful when integrating with frameworks, or automating a component when no framework is being used.
 
 ```js
 const webGreeting = document.createElement("web-greeting")

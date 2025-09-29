@@ -1,11 +1,14 @@
 ---
 title: Complete Example
 ---
-`reactToWebComponent` also works with React components that utilize external libraries like Material-Ui:
+This example shows how the Web component created with React to Web Component, or `r2wc` for short, is created and used in a simple Web page.
+
+`r2wc` works with React components that utilize external libraries like Material-Ui:
 
 ```tsx
 import { Button } from "@mui/material"
 import { ThemeProvider, createTheme } from "@mui/material/styles"
+import r2wc from '@r2wc/react-to-web-component'
 
 interface GreetingProps {
   name: string
@@ -37,7 +40,7 @@ export const Greeting = ({
   )
 }
 
-const WebGreeting = reactToWebComponent(Greeting, {
+const WebGreeting = r2wc(Greeting, {
   props: {
     name: "string",
     description: "string",
@@ -57,9 +60,9 @@ customElements.define("web-greeting", WebGreeting)
 </body>
 ```
 
-Using `reactToWebComponent` with a few provided attributes, while also not filling out the `colorMode` or `buttonVariant`. This will cause the component to render with [Theme Provider's Light Theme](https://mui.com/material-ui/customization/dark-mode/), and with the text variant for Material UI's [Button Component](https://mui.com/material-ui/react-button/)
+Using the `WebGreeting` component with a few provided attributes, while also not filling out the `colorMode` or `buttonVariant`, will cause the component to render with [Theme Provider's Light Theme](https://mui.com/material-ui/customization/dark-mode/), and with the text variant for Material UI's [Button Component](https://mui.com/material-ui/react-button/)
 
-If we access those attributes (`colorMode` and `buttonVariant`):
+If we set those attributes (`colorMode` and `buttonVariant`):
 
 ```html
 <body>
@@ -77,4 +80,4 @@ If we access those attributes (`colorMode` and `buttonVariant`):
 
 The Theme Provider will use the Dark Theme instead, and the Button Component wiill use the contained variant.
 
-Thus, using `reactToWebComponent` you can interact with React Components using Third Party Libraries with ease.
+Thus, using `r2wc` you can interact with React Components using Third Party Libraries with ease.
